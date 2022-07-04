@@ -17,3 +17,16 @@ exports.getReviewById = (req, res, next) => {
       next(err);
     });
 };
+
+exports.patchReviewById = (req, res, next) => {
+  const { review_id } = req.params;
+  const { inc_votes } = req.body;
+  models
+    .updateReviewById(review_id, inc_votes)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};

@@ -8,6 +8,8 @@ app.use(express.json());
 app.get("/api/categories", controllers.getCategories);
 app.get("/api/reviews/:review_id", controllers.getReviewById);
 
+app.patch("/api/reviews/:review_id", controllers.patchReviewById);
+
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid Path" });
 });
