@@ -65,8 +65,6 @@ describe("my express app", () => {
   });
   describe("PATCH /api/reviews/:review_id", () => {
     const goodPatchExample = { inc_votes: 5 };
-    const badPatchExample = { inc_votes: "Not_A_Number" };
-    const badPatchExample2 = { wrongProp: "Not_A_Number" };
 
     describe("Happy paths", () => {
       test("200: should update the expected review if path and request body are valid", () => {
@@ -110,36 +108,6 @@ describe("my express app", () => {
             expect(body.msg).toBe("review_id must be a number");
           });
       });
-      test("400: should return 422 when body has wrong data type", () => {
-        return request(app)
-          .patch("/api/reviews/5")
-          .send(badPatchExample2)
-          .expect(422)
-          .then(({ body }) => {
-            expect(body.msg).toBe(
-              "something wrong with the request information provided"
-            );
-          });
-      });
-    });
-  });
-  describe("GET /api/users", () => {
-    test("200: should respond with all users", () => {
-      return request(app)
-        .get("/api/users")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.users).toHaveLength(4);
-          body.users.forEach((user) => {
-            expect(user).toEqual(
-              expect.objectContaining({
-                username: expect.any(String),
-                name: expect.any(String),
-                avatar_url: expect.any(String),
-              })
-            );
-          });
-        });
     });
   });
 });

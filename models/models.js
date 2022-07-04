@@ -38,12 +38,7 @@ exports.updateReviewById = (review_id, inc_votes) => {
       msg: `review_id must be a number`,
     });
   }
-  if (isNaN(+inc_votes)) {
-    return Promise.reject({
-      status: 422,
-      msg: "something wrong with the request information provided",
-    });
-  }
+
   return db
     .query(
       `
