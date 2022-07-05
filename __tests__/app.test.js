@@ -192,7 +192,7 @@ describe("my express app", () => {
         });
     });
   });
-  describe.only("GET /api/reviews/:review_id/comments", () => {
+  describe("GET /api/reviews/:review_id/comments", () => {
     describe("happy paths", () => {
       test("200: should respond with comments from the given review_id", () => {
         return request(app)

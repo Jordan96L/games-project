@@ -45,7 +45,12 @@ exports.getReviews = (req, res) => {
 
 exports.getCommentsByReviewId = (req, res, next) => {
   const { review_id } = req.params;
-  models.fetchCommentsByReviewId(review_id).then((comments) => {
-    res.status(200).send({ comments });
-  });
+  models
+    .fetchCommentsByReviewId(review_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

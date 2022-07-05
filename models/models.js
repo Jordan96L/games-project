@@ -103,6 +103,12 @@ exports.fetchReviews = () => {
 };
 
 exports.fetchCommentsByReviewId = (review_id) => {
+  if (isNaN(+review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: `review_id must be a number`,
+    });
+  }
   return db
     .query(
       `
@@ -113,7 +119,12 @@ exports.fetchCommentsByReviewId = (review_id) => {
     `,
       [review_id]
     )
-    .then(({ rows }) => {
-      return rows;
+    .then(({ rows, rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `review id does not exist`,
+        });
+      } else return rows;
     });
 };
