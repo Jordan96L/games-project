@@ -42,6 +42,15 @@ describe("my express app", () => {
             expect(body.review.votes).toBe(5);
           });
       });
+      test("200: should respond with a single matching review and comment_count column", () => {
+        const review_id = 5;
+        return request(app)
+          .get(`/api/reviews/${review_id}`)
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.review).toHaveProperty("comment_count");
+          });
+      });
     });
     describe("error handling", () => {
       test("404: should return 404 when passed a invalid review id", () => {
@@ -114,7 +123,7 @@ describe("my express app", () => {
         return request(app)
           .patch("/api/reviews/5")
           .send(badPatchExample)
-          .expect(422)
+          .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("The information provided is not correct");
           });
@@ -123,7 +132,7 @@ describe("my express app", () => {
         return request(app)
           .patch("/api/reviews/5")
           .send(badPatchExample2)
-          .expect(422)
+          .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("The information provided is not correct");
           });
