@@ -119,7 +119,7 @@ describe("my express app", () => {
             expect(body.msg).toBe("review_id must be a number");
           });
       });
-      test("422: should return 422 when passed invalid patch body", () => {
+      test("400: should return 400 when passed invalid patch body", () => {
         return request(app)
           .patch("/api/reviews/5")
           .send(badPatchExample)
@@ -128,7 +128,7 @@ describe("my express app", () => {
             expect(body.msg).toBe("The information provided is not correct");
           });
       });
-      test("422: should return 422 when passed invalid patch body with wrong prop name", () => {
+      test("400: should return 400 when passed invalid patch body with wrong prop name", () => {
         return request(app)
           .patch("/api/reviews/5")
           .send(badPatchExample2)
@@ -157,5 +157,26 @@ describe("my express app", () => {
           });
         });
     });
+  });
+  describe("GET /api/reviews", () => {
+    test("200: should respond with all the reviews", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toHaveLength(13);
+          body.reviews.forEach((review) => {
+            expect(review).toHaveProperty("title");
+            expect(review).toHaveProperty("designer");
+            expect(review).toHaveProperty("owner");
+            expect(review).toHaveProperty("review_img_url");
+            expect(review).toHaveProperty("review_body");
+            expect(review).toHaveProperty("category");
+            expect(review).toHaveProperty("created_at");
+            expect(review).toHaveProperty("votes");
+          });
+        });
+    });
+    test("200: revies should be ordered by created_at");
   });
 });
