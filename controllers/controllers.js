@@ -36,3 +36,9 @@ exports.getUsers = (req, res) => {
     res.status(200).send({ users });
   });
 };
+
+exports.getReviews = (req, res) => {
+  models.fetchReviews().then((reviews) => {
+    res.status(200).send({ reviews });
+  });
+};

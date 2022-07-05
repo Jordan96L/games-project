@@ -11,6 +11,7 @@ app.get("/api/reviews/:review_id", controllers.getReviewById);
 app.patch("/api/reviews/:review_id", controllers.patchReviewById);
 
 app.get("/api/users", controllers.getUsers);
+app.get("/api/reviews", controllers.getReviews);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid Path" });

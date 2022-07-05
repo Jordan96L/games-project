@@ -177,6 +177,15 @@ describe("my express app", () => {
           });
         });
     });
-    test("200: revies should be ordered by created_at");
+    test("200: reviews should be ordered by created_at", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
   });
 });

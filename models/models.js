@@ -85,3 +85,16 @@ exports.fetchUsers = () => {
       return users.rows;
     });
 };
+
+exports.fetchReviews = () => {
+  return db
+    .query(
+      `
+    SELECT * FROM reviews
+    ORDER BY created_at desc
+    `
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
