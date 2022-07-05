@@ -213,5 +213,23 @@ describe("my express app", () => {
           });
       });
     });
+    describe("error handling", () => {
+      test("404: should respond with 404 status when passed invalid review id", () => {
+        return request(app)
+          .get("/api/reviews/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("review id does not exist");
+          });
+      });
+      test("400: should respond with 400 status when passed ivalid input", () => {
+        return request(app)
+          .get("/api/reviews/notAnId/comments")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("review_id must be a number");
+          });
+      });
+    });
   });
 });
