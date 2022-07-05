@@ -42,3 +42,10 @@ exports.getReviews = (req, res) => {
     res.status(200).send({ reviews });
   });
 };
+
+exports.getCommentsByReviewId = (req, res, next) => {
+  const { review_id } = req.params;
+  models.fetchCommentsByReviewId(review_id).then((comments) => {
+    res.status(200).send({ comments });
+  });
+};

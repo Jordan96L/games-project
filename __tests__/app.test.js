@@ -192,4 +192,26 @@ describe("my express app", () => {
         });
     });
   });
+  describe.only("GET /api/reviews/:review_id/comments", () => {
+    describe("happy paths", () => {
+      test("200: should respond with comments from the given review_id", () => {
+        return request(app)
+          .get("/api/reviews/3/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toHaveLength(3);
+            body.comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                review_id: expect.any(Number),
+                created_at: expect.any(String),
+              });
+            });
+          });
+      });
+    });
+  });
 });
