@@ -65,3 +65,15 @@ exports.updateReviewById = (review_id, inc_votes) => {
       } else return review.rows[0];
     });
 };
+
+exports.fetchUsers = () => {
+  return db
+    .query(
+      `
+    SELECT * FROM users;
+    `
+    )
+    .then((users) => {
+      return users.rows;
+    });
+};

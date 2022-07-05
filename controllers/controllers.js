@@ -30,3 +30,9 @@ exports.patchReviewById = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getUsers = (req, res) => {
+  models.fetchUsers().then((users) => {
+    res.status(200).send({ users });
+  });
+};
