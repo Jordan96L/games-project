@@ -166,14 +166,18 @@ describe("my express app", () => {
         .then(({ body }) => {
           expect(body.reviews).toHaveLength(13);
           body.reviews.forEach((review) => {
-            expect(review).toHaveProperty("title");
-            expect(review).toHaveProperty("designer");
-            expect(review).toHaveProperty("owner");
-            expect(review).toHaveProperty("review_img_url");
-            expect(review).toHaveProperty("review_body");
-            expect(review).toHaveProperty("category");
-            expect(review).toHaveProperty("created_at");
-            expect(review).toHaveProperty("votes");
+            expect(review).toMatchObject({
+              review_id: expect.any(Number),
+              title: expect.any(String),
+              category: expect.any(String),
+              designer: expect.any(String),
+              owner: expect.any(String),
+              review_body: expect.any(String),
+              review_img_url: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String),
+            });
           });
         });
     });
