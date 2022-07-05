@@ -65,6 +65,8 @@ describe("my express app", () => {
   });
   describe("PATCH /api/reviews/:review_id", () => {
     const goodPatchExample = { inc_votes: 5 };
+    const badPatchExample = { inc_votes: "not_a_num" };
+    const badPatchExample2 = { iaddVotes: 5 };
 
     describe("Happy paths", () => {
       test("200: should update the expected review if path and request body are valid", () => {
@@ -90,7 +92,7 @@ describe("my express app", () => {
       });
     });
     describe("error handling", () => {
-      test("404: should return 404 when passed invalid id", () => {
+      test("404: should return 404 when passed non-existent id", () => {
         return request(app)
           .patch("/api/reviews/999")
           .send(goodPatchExample)
@@ -106,6 +108,24 @@ describe("my express app", () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("review_id must be a number");
+          });
+      });
+      test("422: should return 422 when passed invalid patch body", () => {
+        return request(app)
+          .patch("/api/reviews/5")
+          .send(badPatchExample)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).toBe("The information provided is not correct");
+          });
+      });
+      test("422: should return 422 when passed invalid patch body with wrong prop name", () => {
+        return request(app)
+          .patch("/api/reviews/5")
+          .send(badPatchExample2)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).toBe("The information provided is not correct");
           });
       });
     });

@@ -39,6 +39,13 @@ exports.updateReviewById = (review_id, inc_votes) => {
     });
   }
 
+  if (isNaN(+inc_votes)) {
+    return Promise.reject({
+      status: 422,
+      msg: "The information provided is not correct",
+    });
+  }
+
   return db
     .query(
       `
