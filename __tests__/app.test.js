@@ -166,6 +166,7 @@ describe("my express app", () => {
         .then(({ body }) => {
           expect(body.reviews).toHaveLength(13);
           body.reviews.forEach((review) => {
+<<<<<<< HEAD
             expect(review).toMatchObject({
               review_id: expect.any(Number),
               title: expect.any(String),
@@ -191,5 +192,19 @@ describe("my express app", () => {
           });
         });
     });
+=======
+            expect(review).toHaveProperty("title");
+            expect(review).toHaveProperty("designer");
+            expect(review).toHaveProperty("owner");
+            expect(review).toHaveProperty("review_img_url");
+            expect(review).toHaveProperty("review_body");
+            expect(review).toHaveProperty("category");
+            expect(review).toHaveProperty("created_at");
+            expect(review).toHaveProperty("votes");
+          });
+        });
+    });
+    test("200: revies should be ordered by created_at");
+>>>>>>> 35300a1c78fe390f511820195f8d22fbe5ed39d3
   });
 });
