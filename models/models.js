@@ -19,7 +19,15 @@ exports.fetchReviewById = (review_id) => {
     });
   }
   return db
-    .query("SELECT * FROM reviews WHERE review_id = $1", [review_id])
+    .query(
+      `
+        SELECT reviews.*, count(comments.body) AS comment_count FROM reviews
+        LEFT JOIN comments ON reviews.review_id = comments.review_id
+        WHERE reviews.review_id = $1
+        GROUP BY reviews.review_id;
+    `,
+      [review_id]
+    )
     .then((review) => {
       if (!review.rows[0]) {
         return Promise.reject({
@@ -28,5 +36,52 @@ exports.fetchReviewById = (review_id) => {
         });
       }
       return review.rows[0];
+    });
+};
+
+exports.updateReviewById = (review_id, inc_votes) => {
+  if (isNaN(+review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: `review_id must be a number`,
+    });
+  }
+
+  if (isNaN(+inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "The information provided is not correct",
+    });
+  }
+
+  return db
+    .query(
+      `
+    UPDATE reviews
+    SET votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *;
+    `,
+      [review_id, inc_votes]
+    )
+    .then((review) => {
+      if (!review.rows[0]) {
+        return Promise.reject({
+          status: 404,
+          msg: `review id does not exist`,
+        });
+      } else return review.rows[0];
+    });
+};
+
+exports.fetchUsers = () => {
+  return db
+    .query(
+      `
+    SELECT * FROM users;
+    `
+    )
+    .then((users) => {
+      return users.rows;
     });
 };
