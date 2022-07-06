@@ -45,10 +45,12 @@ exports.getReviews = (req, res) => {
 
 exports.getCommentsByReviewId = (req, res, next) => {
   const { review_id } = req.params;
-  models
-    .fetchCommentsByReviewId(review_id)
-    .then((comments) => {
-      res.status(200).send({ comments });
+  return Promise.all([
+    models.fetchCommentsByReviewId(review_id),
+    models.checkReviewExists(review_id),
+  ])
+    .then((results) => {
+      res.status(200).send({ comments: results[0] });
     })
     .catch((err) => {
       next(err);

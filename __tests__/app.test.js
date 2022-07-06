@@ -212,6 +212,15 @@ describe("my express app", () => {
             });
           });
       });
+      test("200: should respond with 200 and empty array if review id is valid but no comments from this id", () => {
+        return request(app)
+          .get("/api/reviews/5/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toHaveLength(0);
+            expect(body.comments).toEqual([]);
+          });
+      });
     });
     describe("error handling", () => {
       test("404: should respond with 404 status when passed invalid review id", () => {

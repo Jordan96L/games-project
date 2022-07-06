@@ -112,19 +112,32 @@ exports.fetchCommentsByReviewId = (review_id) => {
   return db
     .query(
       `
-    SELECT comments.* FROM comments
-    JOIN reviews ON comments.review_id = reviews.review_id
-    WHERE comments.review_id = $1
-    GROUP BY comments.comment_id;
+    SELECT * FROM comments
+    WHERE review_id = $1;
     `,
       [review_id]
     )
-    .then(({ rows, rowCount }) => {
-      if (rowCount === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: `review id does not exist`,
-        });
-      } else return rows;
+    .then(({ rows }) => {
+      //   if (rowCount === 0) {
+      //     return Promise.reject({
+      //       status: 404,
+      //       msg: `review id does not exist`,
+      //     });
+      //   } else
+      return rows;
     });
+};
+
+exports.checkReviewExists = (review_id) => {
+  const queryStr = `SELECT * FROM reviews WHERE review_id = $1;`;
+  if (!review_id) return;
+  return db.query(queryStr, [review_id]).then(({ rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "review id does not exist",
+      });
+    }
+    return;
+  });
 };
