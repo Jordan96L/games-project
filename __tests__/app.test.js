@@ -255,6 +255,7 @@ describe("my express app", () => {
         username: "bainesface",
         body: "I loved it so much I played it twice!",
       };
+      const emptyBody = {};
       const badBodyWithWrongDataType = {
         username: 21,
         body: "500",
@@ -305,6 +306,15 @@ describe("my express app", () => {
             .expect(404)
             .then(({ body }) => {
               expect(body.msg).toBe("The request provided does not exist");
+            });
+        });
+        test("400: Should respond with a 400 hen request body is empty", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(emptyBody)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("The information provided was incorrect");
             });
         });
         test("400: should respond a 400 when given review id is not a number", () => {
