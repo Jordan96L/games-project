@@ -192,4 +192,53 @@ describe("my express app", () => {
         });
     });
   });
+  describe("GET /api/reviews/:review_id/comments", () => {
+    describe("happy paths", () => {
+      test("200: should respond with comments from the given review_id", () => {
+        return request(app)
+          .get("/api/reviews/3/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toHaveLength(3);
+            body.comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                review_id: expect.any(Number),
+                created_at: expect.any(String),
+              });
+            });
+          });
+      });
+      test("200: should respond with 200 and empty array if review id is valid but no comments from this id", () => {
+        return request(app)
+          .get("/api/reviews/5/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toHaveLength(0);
+            expect(body.comments).toEqual([]);
+          });
+      });
+    });
+    describe("error handling", () => {
+      test("404: should respond with 404 status when passed invalid review id", () => {
+        return request(app)
+          .get("/api/reviews/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("review id does not exist");
+          });
+      });
+      test("400: should respond with 400 status when passed ivalid input", () => {
+        return request(app)
+          .get("/api/reviews/notAnId/comments")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("review_id must be a number");
+          });
+      });
+    });
+  });
 });

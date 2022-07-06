@@ -101,3 +101,36 @@ exports.fetchReviews = () => {
       return rows;
     });
 };
+
+exports.fetchCommentsByReviewId = (review_id) => {
+  if (isNaN(+review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: `review_id must be a number`,
+    });
+  }
+  return db
+    .query(
+      `
+    SELECT * FROM comments
+    WHERE review_id = $1;
+    `,
+      [review_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+exports.checkReviewExists = (review_id) => {
+  const queryStr = `SELECT * FROM reviews WHERE review_id = $1;`;
+  if (!review_id) return;
+  return db.query(queryStr, [review_id]).then(({ rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "review id does not exist",
+      });
+    }
+  });
+};
