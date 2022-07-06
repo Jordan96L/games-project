@@ -118,12 +118,6 @@ exports.fetchCommentsByReviewId = (review_id) => {
       [review_id]
     )
     .then(({ rows }) => {
-      //   if (rowCount === 0) {
-      //     return Promise.reject({
-      //       status: 404,
-      //       msg: `review id does not exist`,
-      //     });
-      //   } else
       return rows;
     });
 };
@@ -138,6 +132,5 @@ exports.checkReviewExists = (review_id) => {
         msg: "review id does not exist",
       });
     }
-    return;
   });
 };
