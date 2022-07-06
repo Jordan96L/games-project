@@ -15,6 +15,8 @@ app.get("/api/reviews", controllers.getReviews);
 
 app.get("/api/reviews/:review_id/comments", controllers.getCommentsByReviewId);
 
+app.post("/api/reviews/:review_id/comments", controllers.postCommentByReviewId);
+
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid Path" });
 });
@@ -22,6 +24,20 @@ app.use("*", (req, res) => {
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.code === "22P02" || err.code === "23502") {
+    res.status(400).send({
+      msg: "The information provided was incorrect",
+    });
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "The request provided does not exist" });
   } else next(err);
 });
 

@@ -1,3 +1,4 @@
+const { user } = require("pg/lib/defaults");
 const db = require("../db/connection");
 
 exports.fetchCategories = () => {
@@ -40,20 +41,6 @@ exports.fetchReviewById = (review_id) => {
 };
 
 exports.updateReviewById = (review_id, inc_votes) => {
-  if (isNaN(+review_id)) {
-    return Promise.reject({
-      status: 400,
-      msg: `review_id must be a number`,
-    });
-  }
-
-  if (isNaN(+inc_votes)) {
-    return Promise.reject({
-      status: 400,
-      msg: "The information provided is not correct",
-    });
-  }
-
   return db
     .query(
       `
@@ -133,4 +120,32 @@ exports.checkReviewExists = (review_id) => {
       });
     }
   });
+};
+
+exports.insertCommentByReviewId = (review_id, username, body) => {
+  if (isNaN(+review_id)) {
+    return Promise.reject({
+      status: 400,
+      msg: `review_id must be a number`,
+    });
+  }
+  if (typeof username !== "string" || typeof body !== "string") {
+    return Promise.reject({
+      status: 400,
+      msg: "The information provided was incorrect",
+    });
+  }
+  return db
+    .query(
+      `
+  INSERT INTO comments
+  (review_id, author, body)
+  VALUES ($1, $2, $3)
+  RETURNING *;
+  `,
+      [review_id, username, body]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
 };
