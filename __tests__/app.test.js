@@ -119,7 +119,7 @@ describe("my express app", () => {
             .send(goodPatchExample)
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).toBe("review_id must be a number");
+              expect(body.msg).toBe("The information provided was incorrect");
             });
         });
         test("400: should return 400 when passed invalid patch body", () => {
@@ -128,7 +128,7 @@ describe("my express app", () => {
             .send(badPatchExample)
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).toBe("The information provided is not correct");
+              expect(body.msg).toBe("The information provided was incorrect");
             });
         });
         test("400: should return 400 when passed invalid patch body with wrong prop name", () => {
@@ -137,7 +137,7 @@ describe("my express app", () => {
             .send(badPatchExample2)
             .expect(400)
             .then(({ body }) => {
-              expect(body.msg).toBe("The information provided is not correct");
+              expect(body.msg).toBe("The information provided was incorrect");
             });
         });
       });
@@ -246,6 +246,111 @@ describe("my express app", () => {
             .expect(400)
             .then(({ body }) => {
               expect(body.msg).toBe("review_id must be a number");
+            });
+        });
+      });
+    });
+    describe("POST /api/reviews/:review_id/comments", () => {
+      const goodReqBody = {
+        username: "bainesface",
+        body: "I loved it so much I played it twice!",
+      };
+      const emptyBody = {};
+      const badBodyWithWrongDataType = {
+        username: 21,
+        body: "500",
+      };
+      const badBodyWithWrongUsername = {
+        username: "JordanL",
+        body: "I shouldn't be here",
+      };
+      const badBodyWithWrongKey = {
+        username: "bainesface",
+        ThisIsWrong: "Hello there",
+      };
+      const badBodyWithMissingKey = {
+        body: "This should not work",
+      };
+      describe("Happy paths", () => {
+        test("201: should respond with a 201 to show something was created", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(goodReqBody)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body.comment).toMatchObject({
+                comment_id: 7,
+                body: "I loved it so much I played it twice!",
+                votes: 0,
+                author: "bainesface",
+                review_id: 3,
+                created_at: expect.any(String),
+              });
+            });
+        });
+      });
+      describe("Error handling", () => {
+        test("404: Should respond with a 404 when passed invalid ID", () => {
+          return request(app)
+            .post("/api/reviews/555/comments")
+            .send(goodReqBody)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("The request provided does not exist");
+            });
+        });
+        test("404: Should respond with a 404 when passed a incorrect username", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(badBodyWithWrongUsername)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("The request provided does not exist");
+            });
+        });
+        test("400: Should respond with a 400 hen request body is empty", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(emptyBody)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("The information provided was incorrect");
+            });
+        });
+        test("400: should respond a 400 when given review id is not a number", () => {
+          return request(app)
+            .post("/api/reviews/notanumber/comments")
+            .send(goodReqBody)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("review_id must be a number");
+            });
+        });
+        test("400: Should respond with a 400 when value has wrong data type", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(badBodyWithWrongDataType)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("The information provided was incorrect");
+            });
+        });
+        test("400: Should respond with a 400 when passed wrong key", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(badBodyWithWrongKey)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("The information provided was incorrect");
+            });
+        });
+        test("400: Should respond with a 400 when passed a incorrect username", () => {
+          return request(app)
+            .post("/api/reviews/3/comments")
+            .send(badBodyWithMissingKey)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("The information provided was incorrect");
             });
         });
       });

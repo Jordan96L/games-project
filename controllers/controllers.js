@@ -56,3 +56,16 @@ exports.getCommentsByReviewId = (req, res, next) => {
       next(err);
     });
 };
+
+exports.postCommentByReviewId = (req, res, next) => {
+  const { review_id } = req.params;
+  const { username, body } = req.body;
+  models
+    .insertCommentByReviewId(review_id, username, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
