@@ -441,4 +441,34 @@ describe("my express app", () => {
       });
     });
   });
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE /api/comments/:comment_id", () => {
+      test("204: responds with 204 status and no content", () => {
+        return request(app)
+          .delete("/api/comments/2")
+          .expect(204)
+          .then(({ body }) => {
+            expect(body).toEqual({});
+          });
+      });
+      describe("Error handling", () => {
+        test("404: Should return a 404 when passed id that does not exist", () => {
+          return request(app)
+            .delete("/api/comments/111")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Comment ID does not exist");
+            });
+        });
+        test("400: Should return 400 when passed invalid ID", () => {
+          return request(app)
+            .delete("/api/comments/noNum")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("The information provided was incorrect");
+            });
+        });
+      });
+    });
+  });
 });
