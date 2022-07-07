@@ -13,7 +13,7 @@ afterAll(() => {
 });
 
 describe("my express app", () => {
-  describe("/api/categories", () => {
+  describe.only("/api/categories", () => {
     describe("GET /api/categories", () => {
       test("200: should respond with all categories", () => {
         return request(app)
