@@ -38,7 +38,6 @@ describe("my express app", () => {
             .get(`/api/reviews/${review_id}`)
             .expect(200)
             .then(({ body }) => {
-              console.log(body);
               expect(body.review.title).toBe("Proident tempor et.");
               expect(body.review.review_id).toBe(5);
               expect(body.review.designer).toBe("Seymour Buttz");
@@ -87,8 +86,7 @@ describe("my express app", () => {
             .patch("/api/reviews/5")
             .send(goodPatchExample)
             .expect(200)
-            .then(({ body }) => {
-              console.log(body);
+            .then(({ body: { review } }) => {
               expect(review).toEqual({
                 review_id: 5,
                 title: "Proident tempor et.",
@@ -445,7 +443,7 @@ describe("my express app", () => {
   });
   describe("/api/comments/:comment_id", () => {
     describe("DELETE /api/comments/:comment_id", () => {
-      test.only("204: responds with 204 status and no content", () => {
+      test("204: responds with 204 status and no content", () => {
         return request(app)
           .delete("/api/comments/2")
           .expect(204)
@@ -475,6 +473,28 @@ describe("my express app", () => {
             });
         });
       });
+    });
+  });
+  describe("/api", () => {
+    test("GET /api", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual(
+            expect.objectContaining({
+              "GET /api": expect.any(Object),
+              "GET /api/categories": expect.any(Object),
+              "GET /api/reviews/:review_id": expect.any(Object),
+              "PATCH /api/reviews/:review_id": expect.any(Object),
+              "GET /api/users": expect.any(Object),
+              "GET /api/reviews": expect.any(Object),
+              "GET /api/reviews/:review_id/comments": expect.any(Object),
+              "POST /api/reviews/:review_id/comments": expect.any(Object),
+              "DELETE /api/comments/:comment_id": expect.any(Object),
+            })
+          );
+        });
     });
   });
 });

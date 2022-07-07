@@ -1,6 +1,5 @@
 const express = require("express");
 const controllers = require("./controllers/controllers");
-
 const app = express();
 
 app.use(express.json());
@@ -20,6 +19,8 @@ app.get("/api/reviews/:review_id/comments", controllers.getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", controllers.postCommentByReviewId);
 
 app.delete("/api/comments/:comment_id", controllers.deleteCommentById);
+
+app.get("/api", controllers.getApi);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid Path" });

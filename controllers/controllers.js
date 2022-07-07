@@ -1,5 +1,6 @@
 const { sort } = require("../db/data/test-data/categories");
 const models = require("../models/models");
+const myEndpoints = require("../endpoints.json");
 
 exports.getCategories = (req, res) => {
   models.fetchCategories().then((categories) => {
@@ -87,4 +88,8 @@ exports.deleteCommentById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getApi = (req, res) => {
+  res.status(200).send(myEndpoints);
 };
