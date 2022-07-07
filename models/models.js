@@ -73,20 +73,53 @@ exports.fetchUsers = () => {
     });
 };
 
-exports.fetchReviews = () => {
-  return db
-    .query(
-      `
-        SELECT reviews.*, count(comments.body) AS comment_count FROM reviews
-        LEFT JOIN comments ON reviews.review_id = comments.review_id
-        GROUP BY reviews.review_id
-        ORDER BY created_at desc;
-    
-    `
-    )
-    .then(({ rows }) => {
-      return rows;
+exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
+  const validSortOptions = [
+    "review_id",
+    "title",
+    "category",
+    "designer",
+    "owner",
+    "review_body",
+    "review_img_url",
+    "created_at",
+    "votes",
+  ];
+  const validOrderOptions = ["asc, desc"];
+
+  if (!validSortOptions.includes(sort_by)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid sort_by",
     });
+  }
+
+  //   if (!validOrderOptions.includes(order)) {
+  //     return Promise.reject({
+  //       status: 400,
+  //       msg: "Invalid order option",
+  //     });
+  //   }
+
+  const query = {
+    text: `SELECT reviews.*, count(comments.body) AS comment_count FROM reviews
+  LEFT JOIN comments ON reviews.review_id = comments.review_id`,
+  };
+
+  if (category) {
+    query.text += ` WHERE reviews.category = $1`;
+    query.values = [category];
+  }
+  query.text += ` GROUP BY reviews.review_id
+ORDER BY ${sort_by} ${order};`;
+  return db.query(query).then(({ rows }) => {
+    if (category) {
+      return this.checkCategoryExists(category).then(() => {
+        return rows;
+      });
+    }
+    return rows;
+  });
 };
 
 exports.fetchCommentsByReviewId = (review_id) => {
@@ -148,4 +181,18 @@ exports.insertCommentByReviewId = (review_id, username, body) => {
     .then(({ rows }) => {
       return rows[0];
     });
+};
+
+exports.checkCategoryExists = (category) => {
+  const queryStr = `SELECT * FROM reviews WHERE category = $1`;
+
+  if (!category) return;
+  return db.query(queryStr, [category]).then(({ rowCount }) => {
+    if (rowCount === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "Category does not exist",
+      });
+    }
+  });
 };
