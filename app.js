@@ -6,16 +6,20 @@ const app = express();
 app.use(express.json());
 
 app.get("/api/categories", controllers.getCategories);
+
 app.get("/api/reviews/:review_id", controllers.getReviewById);
 
 app.patch("/api/reviews/:review_id", controllers.patchReviewById);
 
 app.get("/api/users", controllers.getUsers);
+
 app.get("/api/reviews", controllers.getReviews);
 
 app.get("/api/reviews/:review_id/comments", controllers.getCommentsByReviewId);
 
 app.post("/api/reviews/:review_id/comments", controllers.postCommentByReviewId);
+
+app.delete("/api/comments/:comment_id", controllers.deleteCommentById);
 
 app.use("*", (req, res) => {
   res.status(404).send({ msg: "Invalid Path" });
