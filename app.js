@@ -42,6 +42,12 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.code === "42601") {
+    res.status(400).send({ msg: "Invalid order option" });
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
   res.status(500).send({ msg: "something went wrong" });
 });
 module.exports = app;

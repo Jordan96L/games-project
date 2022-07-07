@@ -199,6 +199,91 @@ describe("my express app", () => {
           });
       });
     });
+    describe("GET /api/reviews queries", () => {
+      describe("Happy paths", () => {
+        test("200: should respond with a status 200 and sorted by date by default", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=created_at")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeSortedBy("created_at", { descending: true });
+            });
+        });
+        test("200: should respond with a status 200 and sorted by title", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=title")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeSortedBy("title", { descending: true });
+            });
+        });
+        test("200: should respond with a status 200 and ordered by desc by default", () => {
+          return request(app)
+            .get("/api/reviews")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeSortedBy("created_at", { descending: true });
+            });
+        });
+        test("200: should respond with a status 200 and ordered by asc", () => {
+          return request(app)
+            .get("/api/reviews?order=asc")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeSortedBy("created_at", { descending: false });
+            });
+        });
+        test("200: should respond with a status 200 and filtered by category", () => {
+          return request(app)
+            .get("/api/reviews?category=social%20deduction")
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              reviews.forEach((review) => {
+                expect(review.category).toBe("social deduction");
+              });
+            });
+        });
+        test("200: should respond with a status 200 and all 3 queries work together", () => {
+          return request(app)
+            .get(
+              "/api/reviews?sort_by=title&order=asc&category=social%20deduction"
+            )
+            .expect(200)
+            .then(({ body: { reviews } }) => {
+              expect(reviews).toBeSortedBy("title", { descending: false });
+              reviews.forEach((review) => {
+                expect(review.category).toBe("social deduction");
+              });
+            });
+        });
+      });
+      describe("Error handling", () => {
+        test("400: hould respond with 400 if passed invalid sort_by option", () => {
+          return request(app)
+            .get("/api/reviews?sort_by=bananas")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Invalid sort_by");
+            });
+        });
+        test("400: hould respond with 400 if passed invalid order option", () => {
+          return request(app)
+            .get("/api/reviews?order=invalid")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Invalid order option");
+            });
+        });
+        test("404: should return 404 if passed category that does not exist", () => {
+          return request(app)
+            .get("/api/reviews?category=invalid")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).toBe("Category does not exist");
+            });
+        });
+      });
+    });
   });
   describe("/api/reviews/:review_id/comments", () => {
     describe("GET /api/reviews/:review_id/comments", () => {

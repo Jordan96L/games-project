@@ -1,3 +1,4 @@
+const { sort } = require("../db/data/test-data/categories");
 const models = require("../models/models");
 
 exports.getCategories = (req, res) => {
@@ -37,10 +38,16 @@ exports.getUsers = (req, res) => {
   });
 };
 
-exports.getReviews = (req, res) => {
-  models.fetchReviews().then((reviews) => {
-    res.status(200).send({ reviews });
-  });
+exports.getReviews = (req, res, next) => {
+  const { sort_by, order, category } = req.query;
+  models
+    .fetchReviews(sort_by, order, category)
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getCommentsByReviewId = (req, res, next) => {
