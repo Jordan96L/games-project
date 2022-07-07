@@ -8,7 +8,7 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "seed:prod": "NODE_ENV=production postgres://fnadzzridamgrb:6103ee6613cce33e7aebf4bc8d7e8447fbb6f76e7e9e51370294383395730846@ec2-3-226-163-72.compute-1.amazonaws.com:5432/d1shgj5s3ef44k=$ npm run seed",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
     "start": "node listen.js"
   },
   "repository": {
