@@ -38,6 +38,7 @@ describe("my express app", () => {
             .get(`/api/reviews/${review_id}`)
             .expect(200)
             .then(({ body }) => {
+              console.log(body);
               expect(body.review.title).toBe("Proident tempor et.");
               expect(body.review.review_id).toBe(5);
               expect(body.review.designer).toBe("Seymour Buttz");
@@ -86,7 +87,8 @@ describe("my express app", () => {
             .patch("/api/reviews/5")
             .send(goodPatchExample)
             .expect(200)
-            .then(({ body: { review } }) => {
+            .then(({ body }) => {
+              console.log(body);
               expect(review).toEqual({
                 review_id: 5,
                 title: "Proident tempor et.",
