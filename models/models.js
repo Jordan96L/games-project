@@ -94,13 +94,6 @@ exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
     });
   }
 
-  //   if (!validOrderOptions.includes(order)) {
-  //     return Promise.reject({
-  //       status: 400,
-  //       msg: "Invalid order option",
-  //     });
-  //   }
-
   const query = {
     text: `SELECT reviews.*, count(comments.body) AS comment_count FROM reviews
   LEFT JOIN comments ON reviews.review_id = comments.review_id`,
