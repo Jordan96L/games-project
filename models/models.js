@@ -206,6 +206,6 @@ exports.removeCommentById = (comment_id) => {
           status: 404,
           msg: "Comment ID does not exist",
         });
-      } else return rows[0];
+      }
     });
 };
