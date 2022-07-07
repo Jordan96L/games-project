@@ -443,12 +443,16 @@ describe("my express app", () => {
   });
   describe("/api/comments/:comment_id", () => {
     describe("DELETE /api/comments/:comment_id", () => {
-      test("204: responds with 204 status and no content", () => {
+      test.only("204: responds with 204 status and no content", () => {
         return request(app)
           .delete("/api/comments/2")
           .expect(204)
-          .then(({ body }) => {
-            expect(body).toEqual({});
+          .then(() => {
+            return db.query(`SELECT * FROM comments
+            WHERE comment_id = 2`);
+          })
+          .then((result) => {
+            expect(result.rowCount).toBe(0);
           });
       });
       describe("Error handling", () => {
