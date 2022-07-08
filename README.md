@@ -40,6 +40,6 @@ You must create your own development.env and test.env files and inside each file
 
 ## Minimum versions of software
 
-Node.JS: 17.1.0 PostgreSQL: 14.2
+Node.JS: 18.4.0 PostgreSQL: 12.11
 
 Not tested on earlier versions
