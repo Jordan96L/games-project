@@ -2,7 +2,7 @@
 
 ## Link to hosted API
 
-https://my-games-app1.herokuapp.com/api
+https://nc-games-lt7s.onrender.com/api
 
 ## Project summary
 
